@@ -19,4 +19,5 @@
             <td><?=$difficulty?></td>
         </tr>
     </table>
+    <a class="btn btn-danger" href="/recipes/delete/<?= $id ?>/">Supprimer</a>
 </div>

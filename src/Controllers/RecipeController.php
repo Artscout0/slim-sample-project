@@ -84,8 +84,6 @@ class RecipeController extends BaseController
 
     function viewDeleteRecipe(Request $request, Response $response, array $args) {
         $data = $_SESSION['recipes'][$args['id']];
-        var_dump($request->getMethod());
-
 
         if (is_null($data)) {
             $ctrl = new UtilsController();
@@ -99,7 +97,6 @@ class RecipeController extends BaseController
 
     function deleteRecipe(Request $request, Response $response, array $args) {
 
-        var_dump($request->getMethod());
         unset($_SESSION['recipes'][$args['id']]);
 
         return $response
