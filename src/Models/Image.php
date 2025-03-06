@@ -2,19 +2,20 @@
 
 namespace Slicettes\Models;
 
-use Exception;
 use Slicettes\Interfaces\IActiveRecord;
 
-class Recipe extends ActiveRecord implements IActiveRecord
+class Image extends ActiveRecord implements IActiveRecord
 {
-
     public int $id;
-    public string $title;
-    public string $desc;
-    public int $number;
-    public string $difficulty;
+    public int $recipeId;
+    public string $imagePath;
 
-    protected static $table = 'Recipe';
+    protected static $table = 'image';
+
+    public function getRecipe() : Recipe {
+
+        return Recipe::findById($this->id);
+    }
 
     public function __construct(array $data = [])
     {
@@ -30,17 +31,16 @@ class Recipe extends ActiveRecord implements IActiveRecord
     {
         try {
             $this->beginTransaction();
-            $sql = "INSERT INTO " . $this->table . " (title, description, nbPortions, difficulty) VALUES (:title, :desc, :number, :diff)";
+
+            $sql = "INSET INTO " . $this->table . " (recipeId, imagePath) VALUES (:recipeId, :imagePath)";
 
             $this->executeQuery($sql, [
-                ':title' => $this->title,
-                ':desc' => $this->desc,
-                ':number' => $this->number,
-                ':diff' => $this->difficulty,
+                ':recipeId' => $this->recipeId,
+                ':imagePath' => $this->imagePath,
             ]);
             $this->commit();
             $this->id = $this->pdoConnection->lastInsertId();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->rollBack();
             throw $ex;
         }
@@ -51,18 +51,17 @@ class Recipe extends ActiveRecord implements IActiveRecord
      * 
      * @throws Exception Generally throws exceptions when there are problems with the database, or the data you're trying to give it
      */
-    public function update()
+    public function update() 
     {
         try {
             $this->beginTransaction();
-            $sql = "UPDATE " . $this->table . " SET title = :title, description = :desc, nbPortions = :number, difficulty = :diff WHERE id = :id;";
+
+            $sql = "UPDATE " . $this->table . "SET recipeId = :recipeId, imagePath = :imagePath WHERE id = :id";
 
             $this->executeQuery($sql, [
-                ':title' => $this->title,
-                ':desc' => $this->desc,
-                ':number' => $this->number,
-                ':diff' => $this->difficulty,
-                ':id' => $this->id,
+                ':recipeId' => $this->recipeId,
+                ':imagePath' => $this->imagePath,
+                ':id' => $this->id
             ]);
             $this->commit();
         } catch (\Exception $ex) {
@@ -70,7 +69,4 @@ class Recipe extends ActiveRecord implements IActiveRecord
             throw $ex;
         }
     }
-
-    // The lack of 'delete' (from IActiveRecord) doesn't error, as we have in ActiveRecord. I think.
-
 }

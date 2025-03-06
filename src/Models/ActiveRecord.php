@@ -29,6 +29,15 @@ abstract class ActiveRecord
         }
     }
 
+    /**
+     * Runs a query.
+     *
+     * @param mixed $sql The query to run.
+     * @param array $params The parameters the query should have.
+     * 
+     * @return bool whether the query is successful.
+     * 
+     */
     protected function executeQuery($sql, $params = [])
     {
         // Prepares query
@@ -96,9 +105,29 @@ abstract class ActiveRecord
     // Both of there are essentially the same, just depends on whether we have an ID or not.
     abstract public function create();
     abstract public function update();
+    
+    /**
+     * Deletes an instance by ID
+     *
+     * @param mixed $id
+     * 
+     * @return bool Whether the deletion is successful
+     * 
+     */
+    public static function delete($id) {
+        $sql = "DELETE FROM " . static::$table . " WHERE id = :id";
+
+        $pdoInstance = PDOSingleton::getInstance();
+
+        $stmt = $pdoInstance->getConnection()->prepare($sql);
+
+        return $stmt->execute(['id' => $id]);
+    }
 
     /**
      * Saves changes to a database, whether they are creating or updating records.
+     * 
+     * Works by calling either create or update on the child class, so it isn't a magical solution that solves needing to write SQL.
      */
     public function save()
     {
